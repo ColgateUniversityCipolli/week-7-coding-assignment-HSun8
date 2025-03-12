@@ -19,32 +19,65 @@ pois.prob <- function(x, lambda, type="<="){
   }
   if (type == "="){
     # definition of PMF
-    return(dpois(x, lambda))
+    dpois(x, lambda)
   }
   if (type == "!="){
     # complement rule
-    return(1-dpois(x, lamda))
+    1-dpois(x, lamda)
   }
   if(type == "<="){
     # definition of CDF
-    return(ppois(x, lambda))
+    ppois(x, lambda)
   }
   if (type == "<"){
     # P(X < x) = P(X <= x-1)
-    return(ppois(x-1, lambda))
+    ppois(x-1, lambda)
   }
   if (type == ">="){
     # P(X >= x) = 1 - P(X <= x-1)
-    return(1-ppois(x-1, lambda))
+    1-ppois(x-1, lambda)
   }
   if (type == ">"){
     # P(X > x) = 1 - P(X <= x)
-    return(1-ppois(x, lambda))
+    1-ppois(x, lambda)
   }
 }
-beta.prob <- function(x, alpha, beta, prob, type="<="){
+
+# prob removed as a parameter
+# according to pbeta, alpha, beta must be nonnegative
+beta.prob <- function(x, alpha, beta, type="<="){
+  if (alpha < 0){
+    # alpha must be <= 0 
+     alpha = 0
+  }
+  if (beta < 0){
+    # beta must be <= 0 
+    beta = 0
+  }
+  if (x < 0){
+    # x must be <= 0
+    x = 0
+  }
+  if (x < 0){
+    # x must be <= 0
+    x = 0
+  }
   if (type == "="){
-    return(0)
+    # P(X = x) = 0 for all x
+    return(0) 
+  }
+  if (type == "!="){
+    # P(X != x) = 1 for all x
+    return(1)
+  }
+  if(type == "<" | type == "<="){
+    # P(X < x) = P(X <= x) for continuous distributions
+    # definition of pbeta
+    pbeta(x, alpha, beta)
+  }
+  if (type == ">" | type == ">="){
+    # P(X > x) = P(X >= x) = 1 - P(X < x)for continouous distributions 
+    1-pbeta(x, alpha, beta)
   }
   # Use dbeta and pbeta to conditionally return the correct probability
 }

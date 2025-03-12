@@ -69,12 +69,45 @@
   % Question 1
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     \item Write a \texttt{pois.prob()} function that computes $P(X=x)$, 
-    $P(X \neq x)$, $P(X<x)$, $P(X \leq x)$, $P(X > x)$, and $P(X \geq x).$ Enable the user to specify the rate parameter $\lambda$.
+    $P(X \neq x)$, $P(X<x)$, $P(X \leq x)$, $P(X > x)$, and $P(X \geq x).$ Enable the user to specify the rate parameter $\lambda$. \\
+    \textbf{Solution:} Below is the code for computing various probabilities for the Poisson Distribution. The \texttt{prob} parameter was removed as a parameter of the function, as it would only be used in calculations involving \texttt{qpois}, the inverse CDF, which was not used in the function. $\lambda$ was passed in directly as a parameter for the Poisson Distribution, and statements were added to make sure $\lambda$ was $\geq 0$ and \texttt{x} was in the support. 
 \begin{knitrout}\scriptsize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hldef{pois.prob} \hlkwb{<-} \hlkwa{function}\hldef{(}\hlkwc{x}\hldef{,} \hlkwc{size}\hldef{,} \hlkwc{prob}\hldef{,} \hlkwc{type}\hldef{=}\hlsng{"<="}\hldef{)\{}
-  \hlcom{# Use dpois and ppois to conditionally return the correct probability}
+\hldef{pois.prob} \hlkwb{<-} \hlkwa{function}\hldef{(}\hlkwc{x}\hldef{,} \hlkwc{lambda}\hldef{,} \hlkwc{type}\hldef{=}\hlsng{"<="}\hldef{)\{}
+  \hlcom{# }
+  \hlkwa{if} \hldef{(lambda} \hlopt{<} \hlnum{0}\hldef{)\{}
+    \hlcom{# lambda must be <= 0 }
+    \hldef{lambda} \hlkwb{=} \hlnum{0}
+  \hldef{\}}
+  \hlkwa{if} \hldef{(x} \hlopt{<} \hlnum{0}\hldef{)\{}
+    \hlcom{# x must be <= 0}
+    \hldef{x} \hlkwb{=} \hlnum{0}
+  \hldef{\}}
+  \hlkwa{if} \hldef{(type} \hlopt{==} \hlsng{"="}\hldef{)\{}
+    \hlcom{# definition of PMF}
+    \hlkwd{return}\hldef{(}\hlkwd{dpois}\hldef{(x, lambda))}
+  \hldef{\}}
+  \hlkwa{if} \hldef{(type} \hlopt{==} \hlsng{"!="}\hldef{)\{}
+    \hlcom{# complement rule}
+    \hlkwd{return}\hldef{(}\hlnum{1}\hlopt{-}\hlkwd{dpois}\hldef{(x, lamda))}
+  \hldef{\}}
+  \hlkwa{if}\hldef{(type} \hlopt{==} \hlsng{"<="}\hldef{)\{}
+    \hlcom{# definition of CDF}
+    \hlkwd{return}\hldef{(}\hlkwd{ppois}\hldef{(x, lambda))}
+  \hldef{\}}
+  \hlkwa{if} \hldef{(type} \hlopt{==} \hlsng{"<"}\hldef{)\{}
+    \hlcom{# P(X < x) = P(X <= x-1)}
+    \hlkwd{return}\hldef{(}\hlkwd{ppois}\hldef{(x}\hlopt{-}\hlnum{1}\hldef{, lambda))}
+  \hldef{\}}
+  \hlkwa{if} \hldef{(type} \hlopt{==} \hlsng{">="}\hldef{)\{}
+    \hlcom{# P(X >= x) = 1 - P(X <= x-1)}
+    \hlkwd{return}\hldef{(}\hlnum{1}\hlopt{-}\hlkwd{ppois}\hldef{(x}\hlopt{-}\hlnum{1}\hldef{, lambda))}
+  \hldef{\}}
+  \hlkwa{if} \hldef{(type} \hlopt{==} \hlsng{">"}\hldef{)\{}
+    \hlcom{# P(X > x) = 1 - P(X <= x)}
+    \hlkwd{return}\hldef{(}\hlnum{1}\hlopt{-}\hlkwd{ppois}\hldef{(x, lambda))}
+  \hldef{\}}
 \hldef{\}}
 \end{alltt}
 \end{kframe}
