@@ -51,7 +51,7 @@ beta.prob <- function(x, alpha, beta, type="<="){
     return(pbeta(x, alpha, beta))
   }
   if (type == ">" | type == ">="){
-    # P(X > x) = P(X >= x) = 1 - P(X < x)for continouous distributions 
+    # P(X > x) = P(X >= x) = 1 - P(X < x)for continuous distributions 
     return(1 - pbeta(x, alpha, beta))
   }
 }
