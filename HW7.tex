@@ -70,27 +70,20 @@
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     \item Write a \texttt{pois.prob()} function that computes $P(X=x)$, 
     $P(X \neq x)$, $P(X<x)$, $P(X \leq x)$, $P(X > x)$, and $P(X \geq x).$ Enable the user to specify the rate parameter $\lambda$. \\
-    \textbf{Solution:} Below is the code for computing various probabilities for the Poisson Distribution. The \texttt{prob} parameter was removed as a parameter of the function, as it would only be used in calculations involving \texttt{qpois}, the inverse CDF, which was not used in the function. $\lambda$ was passed in directly as a parameter for the Poisson Distribution, and statements were added to make sure $\lambda$ was $\geq 0$ and \texttt{x} was in the support. 
+    \textbf{Solution:} Below is the code for computing various probabilities for the Poisson Distribution. The \texttt{prob} parameter was removed as a parameter of the function, as it would only be used in calculations involving \texttt{qpois} (inverse CDF), which was not used in the function. The default type was set as $\leq$. $\lambda$ was passed in directly as a parameter for the Poisson Distribution. $\lambda$ must be a non-negative number, and the support of \texttt{x} is all non-negative numbers, so $x \geq 0$. It's key to note that the Poisson Distribution is a discrete distribution. 
 \begin{knitrout}\scriptsize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
+\hlcom{# x >= 0 }
+\hlcom{# lambda >= 0}
 \hldef{pois.prob} \hlkwb{<-} \hlkwa{function}\hldef{(}\hlkwc{x}\hldef{,} \hlkwc{lambda}\hldef{,} \hlkwc{type}\hldef{=}\hlsng{"<="}\hldef{)\{}
-  \hlcom{# }
-  \hlkwa{if} \hldef{(lambda} \hlopt{<} \hlnum{0}\hldef{)\{}
-    \hlcom{# lambda must be <= 0 }
-    \hldef{lambda} \hlkwb{=} \hlnum{0}
-  \hldef{\}}
-  \hlkwa{if} \hldef{(x} \hlopt{<} \hlnum{0}\hldef{)\{}
-    \hlcom{# x must be <= 0}
-    \hldef{x} \hlkwb{=} \hlnum{0}
-  \hldef{\}}
   \hlkwa{if} \hldef{(type} \hlopt{==} \hlsng{"="}\hldef{)\{}
     \hlcom{# definition of PMF}
     \hlkwd{return}\hldef{(}\hlkwd{dpois}\hldef{(x, lambda))}
   \hldef{\}}
   \hlkwa{if} \hldef{(type} \hlopt{==} \hlsng{"!="}\hldef{)\{}
     \hlcom{# complement rule}
-    \hlkwd{return}\hldef{(}\hlnum{1}\hlopt{-}\hlkwd{dpois}\hldef{(x, lamda))}
+    \hlkwd{return}\hldef{(}\hlnum{1}\hlopt{-}\hlkwd{dpois}\hldef{(x, lambda))}
   \hldef{\}}
   \hlkwa{if}\hldef{(type} \hlopt{==} \hlsng{"<="}\hldef{)\{}
     \hlcom{# definition of CDF}
@@ -118,12 +111,31 @@
     \item Write a \texttt{beta.prob()} function that computes $P(X=x)$, 
     $P(X \neq x)$, $P(X<x)$, $P(X \leq x)$, $P(X > x)$, and $P(X \geq x)$
     for a beta distribution. Enable the user to specify the shape parameters
-    $\alpha$ and $\beta$.
+    $\alpha$ and $\beta$. \\
+    \textbf{Solution:} Below is the code for computing various probabilities for the Beta Distribution. The \texttt{prob} parameter was removed as a parameter of the function, as it would only be used in calculations involving \texttt{qbeta} (inverse CDF), which was not used in the function. The default type was set as $\leq$. $\alpha$ and $\beta$ were passed in directly as a parameters for the Beta Distribution. $\alpha$ and $\beta$ must be non-negative numbers, and $0 \leq x \leq 1$. $P(X = x)$ and $P(X \neq)$ were hardcoded into the function, as they have the same answer for any $x$. It's key to note that the Beta Distribution is a continuous distribution. 
 \begin{knitrout}\scriptsize
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hldef{beta.prob} \hlkwb{<-} \hlkwa{function}\hldef{(}\hlkwc{x}\hldef{,} \hlkwc{size}\hldef{,} \hlkwc{prob}\hldef{,} \hlkwc{type}\hldef{=}\hlsng{"<="}\hldef{)\{}
-  \hlcom{# Use dbeta and pbeta to conditionally return the correct probability}
+\hlcom{# 0 <= x <= 1}
+\hlcom{# alpha, beta > 0}
+\hldef{beta.prob} \hlkwb{<-} \hlkwa{function}\hldef{(}\hlkwc{x}\hldef{,} \hlkwc{alpha}\hldef{,} \hlkwc{beta}\hldef{,} \hlkwc{type}\hldef{=}\hlsng{"<="}\hldef{)\{}
+  \hlkwa{if} \hldef{(type} \hlopt{==} \hlsng{"="}\hldef{)\{}
+    \hlcom{# P(X = x) = 0 for all x}
+    \hlkwd{return}\hldef{(}\hlnum{0}\hldef{)}
+  \hldef{\}}
+  \hlkwa{if} \hldef{(type} \hlopt{==} \hlsng{"!="}\hldef{)\{}
+    \hlcom{# P(X != x) = 1 for all x}
+    \hlkwd{return}\hldef{(}\hlnum{1}\hldef{)}
+  \hldef{\}}
+  \hlkwa{if}\hldef{(type} \hlopt{==} \hlsng{"<"} \hlopt{|} \hldef{type} \hlopt{==} \hlsng{"<="}\hldef{)\{}
+    \hlcom{# P(X < x) = P(X <= x) for continuous distributions}
+    \hlcom{# definition of pbeta}
+    \hlkwd{return}\hldef{(}\hlkwd{pbeta}\hldef{(x, alpha, beta))}
+  \hldef{\}}
+  \hlkwa{if} \hldef{(type} \hlopt{==} \hlsng{">"} \hlopt{|} \hldef{type} \hlopt{==} \hlsng{">="}\hldef{)\{}
+    \hlcom{# P(X > x) = P(X >= x) = 1 - P(X < x)for continouous distributions }
+    \hlkwd{return}\hldef{(}\hlnum{1} \hlopt{-} \hlkwd{pbeta}\hldef{(x, alpha, beta))}
+  \hldef{\}}
 \hldef{\}}
 \end{alltt}
 \end{kframe}
